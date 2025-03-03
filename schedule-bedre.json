@@ -12,10 +12,7 @@
       { "name": "FREMMEDSPRÅK/ALF", "time": "09:10" },
       { "name": "MATTE", "time": "10:20" },
       { "name": "KROPPSØVING", "time": "11:50" },
-      { "name": "SAMFUNNSFAG", "time": "13:00" },
-      { "name": "Ost", "time": "17:00" },
-      { "name": "SAMFUNNSFAG", "time": "18:10" },
-      { "name": "A", "time": "18:20" }
+      { "name": "SAMFUNNSFAG", "time": "13:00" }
     ],
     "tirsdag": [
       { "name": "ENGELSK", "time": "09:10" },
