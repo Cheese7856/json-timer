@@ -1,18 +1,13 @@
-import { convertSchedule } from './convert.js';
-
-// Hent schedule fra schedule-bedre.json
+// script.js
 fetch('schedule-bedre.json')
   .then(response => response.json())
   .then(data => {
-    // Konverter schedule til ønsket format
-    const schedule = convertSchedule(data);
-    console.log(schedule)
-    
-    // Finn dagens events basert på ukedag
+    const settings = data.settings;
+    const schedule = data.schedule;
     const dayNames = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
     const todayName = dayNames[new Date().getDay()];
     let todaysEvents = schedule[todayName] || [];
-    
+
     // Funksjon for å konvertere "HH:MM" til et Date-objekt for i dag
     function parseTime(timeString) {
       const [hours, minutes] = timeString.split(":").map(Number);
@@ -20,29 +15,63 @@ fetch('schedule-bedre.json')
       d.setHours(hours, minutes, 0, 0);
       return d;
     }
-    
+
+    // Funksjon for å legge til automatiske friminutt i school-modus
+    function addBreaks(events) {
+      if (settings.mode !== 'school') return events;
+      
+      const processedEvents = [];
+      const breakName = settings['break-name'] || 'Friminutt';
+
+      for (let i = 0; i < events.length; i++) {
+        const currentEvent = events[i];
+        processedEvents.push(currentEvent);
+
+        // Legg til friminutt etter hver time (unntatt siste)
+        if (i < events.length - 1) {
+          const currentEnd = parseTime(currentEvent.time);
+          currentEnd.setMinutes(currentEnd.getMinutes() + 50); // 50 minutter varighet
+          const breakStart = formatTime(currentEnd);
+
+          processedEvents.push({
+            name: breakName,
+            time: breakStart
+          });
+        }
+      }
+      return processedEvents;
+    }
+
+    // Hjelpefunksjon for å konvertere Date til HH:MM
+    function formatTime(date) {
+      return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    }
+
+    // Legg til friminutt hvis school-modus
+    todaysEvents = addBreaks(todaysEvents);
+
     // Sorter events etter tid
     todaysEvents.sort((a, b) => parseTime(a.time) - parseTime(b.time));
-    
+
     // Hent HTML-elementer
     const timerElem = document.getElementById("timer");
     const eventNameElem = document.getElementById("event-name");
     const progressBar = document.getElementById("progress-bar");
     const endMessage = document.getElementById("end-message");
-    const openLinkButton = document.getElementById("open-link");
-    const pipButton = document.getElementById("pipButton");
-    
+    const openLinkButton = document.getElementById("open-link"); // Eksisterende knapp for link
+    const pipButton = document.getElementById("pipButton"); // Knapp for picture in picture
+
     // Regn ut omkretsen til sirkelen
     const radius = progressBar.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
     progressBar.style.strokeDasharray = circumference;
     progressBar.style.strokeDashoffset = circumference;
-    
+
     // Globale variabler for events
     let currentEventIndex = 0;
     let prevEventObj = null;
     let nextEventObj = null;
-    
+
     // Finn neste event basert på nåtid
     const now = new Date();
     let funnet = false;
@@ -61,7 +90,7 @@ fetch('schedule-bedre.json')
     if (!funnet && todaysEvents.length > 0) {
       currentEventIndex = todaysEvents.length;
     }
-    
+
     if (currentEventIndex >= todaysEvents.length) {
       timerElem.textContent = "00:00";
       eventNameElem.textContent = "";
@@ -69,7 +98,7 @@ fetch('schedule-bedre.json')
     } else {
       eventNameElem.textContent = todaysEvents[currentEventIndex].name;
     }
-    
+
     // Funksjon for å starte neste event
     function startNextEvent() {
       currentEventIndex++;
@@ -84,10 +113,10 @@ fetch('schedule-bedre.json')
       nextEventObj = todaysEvents[currentEventIndex];
       eventNameElem.textContent = nextEventObj.name;
     }
-    
+
     // Variabel for PiP-vinduet
     let pipWindow = null;
-    
+
     // Funksjon for å oppdatere timer og progress bar
     function update() {
       const now = new Date();
@@ -116,16 +145,16 @@ fetch('schedule-bedre.json')
         const displayText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} (${prosent}%)`;
         progressBar.style.strokeDashoffset = circumference * (1 - progress);
         timerElem.textContent = displayText;
-        
-        // Send oppdatering til PiP-vinduet
+
+        // Send oppdatering til PiP-vinduet om det finnes
         if (pipWindow) {
           pipWindow.postMessage({ action: 'updateTime', time: displayText }, '*');
         }
       }
     }
-    
+
     const timerInterval = setInterval(update, 1000);
-    
+
     // Funksjonalitet for PiP-knappen
     if (pipButton) {
       pipButton.addEventListener("click", async () => {
@@ -138,8 +167,8 @@ fetch('schedule-bedre.json')
             width: 200,
             height: 100
           });
-          
-          // PiP-innhold
+
+          // Minimalt PiP-innhold med kun tekst
           const pipContent = `
             <!DOCTYPE html>
             <html>
@@ -168,10 +197,10 @@ fetch('schedule-bedre.json')
             </body>
             </html>
           `;
-          
+
           pipWindow.document.write(pipContent);
           pipWindow.document.close();
-          
+
           pipWindow.addEventListener("pagehide", () => {
             pipWindow = null;
           });
@@ -180,8 +209,8 @@ fetch('schedule-bedre.json')
         }
       });
     }
-    
-    // Funksjonalitet for openLink-knappen
+
+    // Funksjonalitet for openLink-knappen (fra tidligere)
     if (openLinkButton) {
       openLinkButton.addEventListener("click", () => {
         let linkToOpen = null;
@@ -198,6 +227,4 @@ fetch('schedule-bedre.json')
       });
     }
   })
-  .catch(error => {
-    console.error("Feil ved lasting av schedule:", error);
-  });
+  .catch(error => console.error('Feil:', error));
