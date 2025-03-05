@@ -1,0 +1,65 @@
+{
+  "settings": {
+    "mode": "school",
+    "break-name": "Friminutt",
+    "break-length": "10",
+    "hour-length": 60,
+    "end-name": "Slutten på dagen"
+  },
+  "schedule": {
+    "mandag": [
+      { "name": "ARBEIDSLIVSFAG", "time": "08:00" },
+      { "name": "FREMMEDSPRÅK/ALF", "time": "09:10" },
+      { "name": "MATTE", "time": "10:20" },
+      { "name": "KROPPSØVING", "time": "11:50" },
+      { "name": "SAMFUNNSFAG", "time": "13:00" }
+    ],
+    "tirsdag": [
+      { "name": "ENGELSK", "time": "09:10" },
+      { "name": "NORSK", "time": "10:20" },
+      { "name": "FREMMEDSPRÅK", "time": "11:50" }
+    ],
+    "onsdag": [
+      { "name": "NATURFAG", "time": "08:00" },
+      { "name": "UDV/OLWEUS", "time": "09:10" },
+      { "name": "MATTE", "time": "10:20" },
+      { "name": "SAMFUNNSFAG", "time": "11:50" },
+      { "name": "NATURFAG", "time": "13:00" }
+    ],
+    "torsdag": [
+      { "name": "KRLE", "time": "08:00" },
+      { "name": "ENGELSK", "time": "09:10" },
+      { "name": "KUH", "time": "10:20" },
+      { "name": "KUH", "time": "11:50" },
+      { "name": "NORSK", "time": "13:00" },
+      { "name": "KROPPSØVING", "time": "16:50" }
+    ],
+    "fredag": [
+      { "name": "MATTE", "time": "08:00" },
+      { "name": "NATURFAG", "time": "09:10" },
+      { "name": "SAMFUNNSFAG", "time": "10:20" },
+      { "name": "NORSK", "time": "11:50" },
+      { "name": "NORSK (TIL KL. 13:30)", "time": "13:00" }
+    ],
+    "lørdag": [
+      { "name": "Lørdagshendelse 1", "time": "12:05" },
+      { "name": "Lørdagshendelse 2", "time": "12:15" },
+      { "name": "Lørdagshendelse 3", "time": "13:20" }
+    ],
+    "søndag": [
+      { "name": "Søndagshendelse 1", "time": "12:00" },
+      { "name": "Søndagshendelse 2", "time": "12:10" },
+      { "name": "Søndagshendelse 3", "time": "12:20" }
+    ]
+  },
+  "odd-week": {
+    "onsdag": [
+      { "name": "NATURFAG", "time": "08:00" },
+      { "name": "UDV/OLWEUS", "time": "09:10" },
+      { "name": "MATTE", "time": "10:20" },
+      { "name": "Valgfag", "time": "11:50" },
+      { "name": "Valgfag", "time": "13:00" },
+      { "name": "Valgfag", "time": "14:10" }
+    ]
+  }
+}

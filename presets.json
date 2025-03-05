@@ -1,0 +1,17 @@
+[
+  {
+    "id": "8E",
+    "name": "Klasse 8E",
+    "file": "presets/8E.json"
+  },
+  {
+    "id": "test",
+    "name": "Preset for testing",
+    "file": "presets/test.json"
+  },
+  {
+    "id": "8D",
+    "name": "Klasse 8D",
+    "file": "presets/8D.json"
+  }
+]

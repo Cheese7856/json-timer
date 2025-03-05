@@ -8,7 +8,7 @@
   },
   "schedule": {
     "mandag": [
-      { "name": "ARBEIDSLIVSFAG", "time": "08:00" },
+      { "name": "TEST", "time": "08:00" },
       { "name": "FREMMEDSPRÅK/ALF", "time": "09:10" },
       { "name": "MATTE", "time": "10:20" },
       { "name": "KROPPSØVING", "time": "11:50" },
@@ -17,14 +17,16 @@
     "tirsdag": [
       { "name": "ENGELSK", "time": "09:10" },
       { "name": "NORSK", "time": "10:20" },
-      { "name": "FREMMEDSPRÅK", "time": "11:50" }
+      { "name": "FREMMEDSPRÅK", "time": "11:50" },
+      { "name": "Ostepop", "time": "19:50" }
     ],
     "onsdag": [
       { "name": "NATURFAG", "time": "08:00" },
       { "name": "UDV/OLWEUS", "time": "09:10" },
       { "name": "MATTE", "time": "10:20" },
       { "name": "SAMFUNNSFAG", "time": "11:50" },
-      { "name": "NATURFAG", "time": "13:00" }
+      { "name": "NATURFAG", "time": "13:00" },
+      { "name": "ostepop", "time": "22:00" }
     ],
     "torsdag": [
       { "name": "KRLE", "time": "08:00" },
@@ -44,7 +46,7 @@
     "lørdag": [
       { "name": "Lørdagshendelse 1", "time": "12:05" },
       { "name": "Lørdagshendelse 2", "time": "12:15" },
-      { "name": "Lørdagshendelse 3", "time": "13:20"}
+      { "name": "Lørdagshendelse 3", "time": "13:20" }
     ],
     "søndag": [
       { "name": "Søndagshendelse 1", "time": "12:00" },

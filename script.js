@@ -1,67 +1,121 @@
-import { convertSchedule } from './convert.js';
+import { convertSchedule } from "./convert.js";
 
-// Hent schedule fra schedule-bedre.json
-fetch('schedule-bedre.json')
-  .then(response => response.json())
-  .then(data => {
-    // Konverter schedule til ønsket format
+// ======================
+// KONFIGURASJONER
+// ======================
+const DEFAULT_SCHEDULE = "schedule-bedre.json";
+const PRESETS_URL = "presets.json";
+const STORAGE_KEY = "jsonPreset";
+
+// ======================
+// GLOBALE VARIABLER
+// ======================
+let timerInterval;
+let pipWindow = null;
+
+// ======================
+// CUSTOM UI VARIABLER (MIDLERTIDIG DEAKTIVERT)
+// ======================
+// let customJsonInput;
+// let jsonErrorDisplay;
+
+// ======================
+// HENT PRESET FIL
+// ======================
+async function getPresetFile() {
+  try {
+    const storedId = localStorage.getItem(STORAGE_KEY) || "default";
+
+    if (storedId === "custom") {
+      const customData = localStorage.getItem("customSchedule");
+      if (customData) return JSON.parse(customData);
+      console.warn("Ingen egendefinert timeplan, laster standard");
+      return DEFAULT_SCHEDULE;
+    }
+
+    const presetsResponse = await fetch(PRESETS_URL);
+    if (!presetsResponse.ok) throw new Error("Kunne ikke laste presets");
+
+    const presets = await presetsResponse.json();
+    const preset = presets.find((p) => p.id === storedId);
+    return preset?.file || DEFAULT_SCHEDULE;
+  } catch (error) {
+    console.error("Feil ved preset-håndtering:", error);
+    return DEFAULT_SCHEDULE;
+  }
+}
+
+// ======================
+// INITIER APP
+// ======================
+async function initApp() {
+  try {
+    const presetSource = await getPresetFile();
+    let data;
+
+    if (typeof presetSource === "string") {
+      const response = await fetch(presetSource);
+      data = await response.json();
+    } else {
+      data = presetSource;
+    }
+
     const schedule = convertSchedule(data);
-    console.log(schedule)
-    
-    // Finn dagens events basert på ukedag
     const dayNames = ["søndag", "mandag", "tirsdag", "onsdag", "torsdag", "fredag", "lørdag"];
     const todayName = dayNames[new Date().getDay()];
     let todaysEvents = schedule[todayName] || [];
-    
-    // Funksjon for å konvertere "HH:MM" til et Date-objekt for i dag
-    function parseTime(timeString) {
-      const [hours, minutes] = timeString.split(":").map(Number);
+
+    // ======================
+    // HJELPEFUNKSJONER
+    // ======================
+    const parseTime = (timeStr) => {
+      const [hours, minutes] = timeStr.split(":").map(Number);
       const d = new Date();
       d.setHours(hours, minutes, 0, 0);
       return d;
-    }
-    
-    // Sorter events etter tid
+    };
+
     todaysEvents.sort((a, b) => parseTime(a.time) - parseTime(b.time));
-    
-    // Hent HTML-elementer
+
+    // ======================
+    // DOM-ELEMENTER
+    // ======================
     const timerElem = document.getElementById("timer");
     const eventNameElem = document.getElementById("event-name");
     const progressBar = document.getElementById("progress-bar");
     const endMessage = document.getElementById("end-message");
     const openLinkButton = document.getElementById("open-link");
     const pipButton = document.getElementById("pipButton");
-    
-    // Regn ut omkretsen til sirkelen
+
+    // Progress bar konfigurasjon
     const radius = progressBar.r.baseVal.value;
     const circumference = 2 * Math.PI * radius;
     progressBar.style.strokeDasharray = circumference;
     progressBar.style.strokeDashoffset = circumference;
-    
-    // Globale variabler for events
+
+    // ======================
+    // TIMER LOGIKK
+    // ======================
     let currentEventIndex = 0;
     let prevEventObj = null;
     let nextEventObj = null;
-    
-    // Finn neste event basert på nåtid
     const now = new Date();
-    let funnet = false;
+
+    // Finn første kommende event
+    let found = false;
     for (let i = 0; i < todaysEvents.length; i++) {
       const eventTime = parseTime(todaysEvents[i].time);
       if (eventTime > now) {
         currentEventIndex = i;
         nextEventObj = todaysEvents[i];
-        if (i > 0) {
-          prevEventObj = todaysEvents[i - 1];
-        }
-        funnet = true;
+        if (i > 0) prevEventObj = todaysEvents[i - 1];
+        found = true;
         break;
       }
     }
-    if (!funnet && todaysEvents.length > 0) {
-      currentEventIndex = todaysEvents.length;
-    }
-    
+    if (!found && todaysEvents.length > 0) currentEventIndex = todaysEvents.length;
+
+    // Initialiser visning
     if (currentEventIndex >= todaysEvents.length) {
       timerElem.textContent = "00:00";
       eventNameElem.textContent = "";
@@ -69,8 +123,10 @@ fetch('schedule-bedre.json')
     } else {
       eventNameElem.textContent = todaysEvents[currentEventIndex].name;
     }
-    
-    // Funksjon for å starte neste event
+
+    // ======================
+    // EVENT HANDLERS
+    // ======================
     function startNextEvent() {
       currentEventIndex++;
       if (currentEventIndex >= todaysEvents.length) {
@@ -84,12 +140,8 @@ fetch('schedule-bedre.json')
       nextEventObj = todaysEvents[currentEventIndex];
       eventNameElem.textContent = nextEventObj.name;
     }
-    
-    // Variabel for PiP-vinduet
-    let pipWindow = null;
-    
-    // Funksjon for å oppdatere timer og progress bar
-    function update() {
+
+    function updateTimer() {
       const now = new Date();
       if (nextEventObj) {
         const nextEventTime = parseTime(nextEventObj.time);
@@ -97,9 +149,9 @@ fetch('schedule-bedre.json')
           startNextEvent();
           return;
         }
+
         let progress;
         if (!prevEventObj) {
-          // Første event: vis 100%
           progress = 1;
         } else {
           const prevEventTime = parseTime(prevEventObj.time);
@@ -108,96 +160,128 @@ fetch('schedule-bedre.json')
           progress = elapsed / totalTime;
           progress = Math.min(Math.max(progress, 0), 1);
         }
+
         const remaining = nextEventTime - now;
         const totalSeconds = Math.floor(remaining / 1000);
         const mins = Math.floor(totalSeconds / 60);
         const secs = totalSeconds % 60;
-        const prosent = Math.round(progress * 100);
-        const displayText = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')} (${prosent}%)`;
+        const percent = Math.round(progress * 100);
+
+        timerElem.textContent = `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")} (${percent}%)`;
         progressBar.style.strokeDashoffset = circumference * (1 - progress);
-        timerElem.textContent = displayText;
-        
-        // Send oppdatering til PiP-vinduet
+
         if (pipWindow) {
-          pipWindow.postMessage({ action: 'updateTime', time: displayText }, '*');
+          pipWindow.postMessage(
+            {
+              action: "updateTime",
+              time: timerElem.textContent,
+            },
+            "*"
+          );
         }
       }
     }
-    
-    const timerInterval = setInterval(update, 1000);
-    
-    // Funksjonalitet for PiP-knappen
+
+    // Start timer
+    timerInterval = setInterval(updateTimer, 1000);
+
+    // ======================
+    // PiP FUNKSJONALITET
+    // ======================
     if (pipButton) {
       pipButton.addEventListener("click", async () => {
-        if (!('documentPictureInPicture' in window)) {
-          alert("PiP støttes ikke i denne nettleseren.");
+        if (!("documentPictureInPicture" in window)) {
+          alert("PiP støttes ikke i denne nettleseren");
           return;
         }
+
         try {
           pipWindow = await documentPictureInPicture.requestWindow({
             width: 200,
-            height: 100
+            height: 100,
           });
-          
-          // PiP-innhold
-          const pipContent = `
-            <!DOCTYPE html>
+
+          pipWindow.document.write(`
             <html>
-            <head>
-              <style>
-                body {
-                  margin: 0;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                  height: 100vh;
-                  font-size: 32px;
-                  font-family: Arial, sans-serif;
-                }
-              </style>
-            </head>
-            <body>
-              <div id="pipTime">00:00</div>
-              <script>
-                window.addEventListener('message', (e) => {
-                  if (e.data.action === 'updateTime') {
-                    document.getElementById('pipTime').textContent = e.data.time;
+              <head>
+                <style>
+                  body { 
+                    margin: 0; 
+                    display: flex; 
+                    justify-content: center; 
+                    align-items: center; 
+                    height: 100vh; 
+                    font-size: 24px;
+                    font-family: Arial;
                   }
-                });
-              <\/script>
-            </body>
+                </style>
+              </head>
+              <body>
+                <div id="pipTime">00:00</div>
+                <script>
+                  window.addEventListener('message', (e) => {
+                    if (e.data.action === 'updateTime') {
+                      document.getElementById('pipTime').textContent = e.data.time;
+                    }
+                  });
+                <\/script>
+              </body>
             </html>
-          `;
-          
-          pipWindow.document.write(pipContent);
-          pipWindow.document.close();
-          
+          `);
+
           pipWindow.addEventListener("pagehide", () => {
             pipWindow = null;
           });
-        } catch (e) {
-          console.error("Feil ved PiP:", e);
+        } catch (error) {
+          console.error("PiP-feil:", error);
         }
       });
     }
-    
-    // Funksjonalitet for openLink-knappen
-    if (openLinkButton) {
-      openLinkButton.addEventListener("click", () => {
-        let linkToOpen = null;
-        if (prevEventObj && prevEventObj.link) {
-          linkToOpen = prevEventObj.link;
-        } else if (nextEventObj && nextEventObj.link) {
-          linkToOpen = nextEventObj.link;
-        }
-        if (linkToOpen) {
-          window.open(linkToOpen, "_blank");
-        } else {
-          alert("Ingen link tilgjengelig for forrige eller neste hendelse.");
+
+    // ======================
+    // CUSTOM UI LOGIKK (MIDLERTIDIG DEAKTIVERT)
+    // ======================
+    /*
+    if (document.getElementById("load-custom-json")) {
+      document.getElementById("load-custom-json").addEventListener("click", async () => {
+        try {
+          const rawData = document.getElementById("custom-json-input").value.trim();
+          
+          if (!rawData) throw new Error("Tomt JSON-felt");
+          
+          const customData = JSON.parse(rawData);
+          if (!customData.settings || !customData.schedule) {
+            throw new Error("Mangler settings eller schedule");
+          }
+
+          localStorage.setItem("customSchedule", rawData);
+          jsonErrorDisplay.textContent = "";
+          alert("Timeplan lastet!");
+          location.reload();
+        } catch (error) {
+          jsonErrorDisplay.textContent = `Feil: ${error.message}`;
         }
       });
     }
-  })
-  .catch(error => {
-    console.error("Feil ved lasting av schedule:", error);
-  });
+    */
+  } catch (error) {
+    console.error("Initialiseringsfeil:", error);
+    const fallbackResponse = await fetch(DEFAULT_SCHEDULE);
+    initApp(convertSchedule(await fallbackResponse.json()));
+  }
+}
+
+// ======================
+// INITIERING
+// ======================
+document.addEventListener("DOMContentLoaded", () => {
+  const presetSelector = document.getElementById("class-preset");
+  if (presetSelector) {
+    presetSelector.addEventListener("change", async () => {
+      localStorage.setItem(STORAGE_KEY, presetSelector.value);
+      clearInterval(timerInterval);
+      await initApp();
+    });
+  }
+  initApp();
+});

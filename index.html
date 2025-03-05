@@ -1,80 +1,42 @@
 <!DOCTYPE html>
 <html lang="nb">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Progress Timer</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      background-color: #f0f0f0;
-    }
-    .progress-container {
-      position: relative;
-      width: 300px;
-      height: 300px;
-    }
-    .progress-circle {
-      transform: rotate(-90deg);
-      width: 100%;
-      height: 100%;
-    }
-    .progress-background {
-      fill: none;
-      stroke: #d3d3d3;
-      stroke-width: 8;
-    }
-    .progress-bar {
-      fill: none;
-      stroke: #4CAF50;
-      stroke-width: 8;
-      stroke-linecap: round;
-      transition: stroke-dashoffset 0.3s ease;
-    }
-    .content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      text-align: center;
-      font-size: 2em;
-    }
-    #end-message {
-      display: none;
-      color: #ff4444;
-      font-size: 1.5em;
-      margin-top: 20px;
-    }
-    /* Stil for knappene */
-    button {
-      margin-top: 15px;
-      padding: 10px 20px;
-      font-size: 1em;
-    }
-  </style>
-</head>
-<body>
-  <div class="progress-container">
-    <svg class="progress-circle" width="300" height="300">
-      <circle cx="150" cy="150" r="140" class="progress-background"/>
-      <circle cx="150" cy="150" r="140" class="progress-bar" id="progress-bar"/>
-    </svg>
-    <div class="content">
-      <div id="timer">00:00</div>
-      <div id="event-name"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Progress Timer</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="header-container">
+      <h1>Timer</h1>
     </div>
-  </div>
-  
-  <button id="open-link">Åpne forrige hendelse</button>
-  <button id="pipButton">Åpne PiP</button>
-  <div id="end-message">Dagen er over</div>
 
-  <script type="module" src="script.js"></script>
-</body>
+    <div class="progress-container">
+      <svg class="progress-circle" width="300" height="300">
+        <circle cx="150" cy="150" r="140" class="progress-background" />
+        <circle cx="150" cy="150" r="140" class="progress-bar" id="progress-bar" />
+      </svg>
+      <div class="content">
+        <div id="timer">00:00</div>
+        <div id="event-name"></div>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <div id="end-message">Dagen er over</div>
+      <button id="open-link">Åpne forrige hendelse (Virker ikke)</button>
+      <button id="pipButton">Åpne PiP</button>
+
+      <!-- Legg til under knappene -->
+      <div class="preset-selector" style="margin-top: 15px">
+        <label for="class-preset">Velg klasse:</label>
+        <select id="class-preset">
+          <!-- Dynamisk fylles med JavaScript -->
+        </select>
+      </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script src="presetLoader.js"></script>
+  </body>
 </html>
