@@ -211,7 +211,7 @@ async function initApp() {
                     justify-content: center; 
                     align-items: center; 
                     height: 100vh; 
-                    font-size: 24px;
+                    font-size: 32px;
                     font-family: Arial;
                   }
                 </style>
