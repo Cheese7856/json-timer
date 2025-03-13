@@ -36,6 +36,21 @@
       </div>
     </div>
 
+    <!-- Custom timeplan panel -->
+    <!-- Custom timeplan panel -->
+    <div id="custom-json-panel" class="custom-panel">
+      <h3>Egendefinert Timeplan</h3>
+      <textarea id="custom-json-input" class="json-input" placeholder="Lim inn JSON her..."></textarea>
+      <div class="button-group">
+        <button id="load-custom-json" class="confirm-btn">Last inn</button>
+        <button id="close-custom-panel" class="cancel-btn">Lukk</button>
+      </div>
+      <div id="json-error" class="error-message"></div>
+    </div>
+
+    <!-- Legg denne rett under "Velg klasse"-dropdownen -->
+    <button id="reopen-custom-panel" class="reopen-btn" style="display: none">⚙️ Rediger Timeplan</button>
+
     <script type="module" src="script.js"></script>
     <script src="presetLoader.js"></script>
   </body>

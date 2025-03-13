@@ -1,69 +1,38 @@
 document.addEventListener("DOMContentLoaded", async () => {
   const selector = document.getElementById("class-preset");
   const STORAGE_KEY = "jsonPreset";
-  let presets = [];
 
-  /*
-  // Legg til høyrepanel for custom JSON
-  const customUI = `
-    <div id="custom-json-panel" style="
-      position: fixed;
-      right: 0;
-      top: 0;
-      width: 20%;
-      height: 100vh;
-      background: #fff;
-      border-left: 1px solid #ddd;
-      padding: 20px;
-      box-shadow: -2px 0 8px rgba(0,0,0,0.1);
-      z-index: 1000;
-      display: none;
-      overflow-y: auto;
-    ">
-      <h3 style="margin-top: 0; color: #2c3e50;">Egendefinert Timeplan</h3>
-      <textarea 
-        id="custom-json-input" 
-        placeholder="Lim inn din JSON her..."
-        style="
-          width: 100%;
-          height: 70vh;
-          font-family: 'Courier New', monospace;
-          padding: 10px;
-          border: 2px solid #eee;
-          border-radius: 4px;
-          resize: none;
-        "
-      ></textarea>
-      <button 
-        id="load-custom-json"
-        style="
-          margin-top: 15px;
-          padding: 10px 20px;
-          background: #27ae60;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          width: 100%;
-        "
-      >
-        Last Inn Timeplan
-      </button>
-      <div id="json-error" style="color: #e74c3c; margin-top: 10px;"></div>
-    </div>
-  `;
-  document.body.insertAdjacentHTML('beforeend', customUI);
-  */
+  // DOM-referanser
+  const customPanel = document.getElementById("custom-json-panel");
+  const jsonInput = document.getElementById("custom-json-input");
+  const errorDisplay = document.getElementById("json-error");
+  const loadBtn = document.getElementById("load-custom-json");
+  const closeBtn = document.getElementById("close-custom-panel");
+  const reopenBtn = document.getElementById("reopen-custom-panel");
 
+  // Hjelpefunksjoner
+  const showError = (message) => {
+    errorDisplay.textContent = message;
+    errorDisplay.style.display = "block";
+    errorDisplay.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const clearError = () => {
+    errorDisplay.textContent = "";
+    errorDisplay.style.display = "none";
+  };
+
+  const togglePanel = (show) => {
+    customPanel.style.display = show ? "block" : "none";
+    reopenBtn.style.display = show || selector.value !== "custom" ? "none" : "block";
+  };
+
+  // Initialiser panel og knapper
   try {
-    const response = await fetch("presets.json");
-    if (!response.ok) throw new Error("Kunne ikke laste presets");
-    presets = await response.json();
+    const presets = await (await fetch("presets.json")).json();
+    const savedId = localStorage.getItem(STORAGE_KEY) || "default";
 
-    // Last inn lagret ID
-    const savedId = localStorage.getItem(STORAGE_KEY);
-
-    // Fyll dropdown med presets
+    // Fyll dropdown
     presets.forEach((preset) => {
       const option = new Option(preset.name, preset.id);
       option.selected = preset.id === savedId;
@@ -71,48 +40,74 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
 
     // Legg til custom-valg
-    const customOption = new Option("Egendefinert timeplan", "custom");
-    customOption.selected = "custom" === savedId;
+    const customOption = new Option("Egendefinert", "custom");
+    customOption.selected = savedId === "custom";
     selector.add(customOption);
 
-    /* =====================================================================
-    // Håndter visning av panel
-    const customPanel = document.getElementById("custom-json-panel");
-    const jsonError = document.getElementById("json-error");
-    customPanel.style.display = savedId === "custom" ? "block" : "none";
-
-    selector.addEventListener("change", (e) => {
-      const value = e.target.value;
-      localStorage.setItem(STORAGE_KEY, value);
-      customPanel.style.display = value === "custom" ? "block" : "none";
-      if (value !== "custom") location.reload();
-    });
-
-    // Håndter JSON-innlasting
-    document.getElementById("load-custom-json").addEventListener("click", () => {
-      try {
-        const rawData = document.getElementById("custom-json-input").value.trim();
-        if (!rawData) throw new Error("Vennligst lim inn JSON-data");
-        
-        const customData = JSON.parse(rawData);
-        if (!customData.settings || !customData.schedule) {
-          throw new Error("Mangler 'settings' eller 'schedule' i JSON");
-        }
-
-        localStorage.setItem("customSchedule", rawData);
-        jsonError.textContent = "";
-        alert("Timeplan lastet!");
-        location.reload();
-      } catch (error) {
-        jsonError.textContent = `Feil: ${error.message}`;
-      }
-    });
-    */
+    // Initialiser visning
+    togglePanel(savedId === "custom");
+    reopenBtn.style.display = savedId === "custom" ? "block" : "none";
   } catch (error) {
     console.error("Feil ved lasting av presets:", error);
     selector.innerHTML = `
-      <option value="" disabled selected>Kunne ikke laste klasser</option>
-      <option value="custom">Bruk standard timeplan</option>
+      <option value="" disabled selected>Feil ved lasting</option>
+      <option value="custom">Bruk standard</option>
     `;
+  }
+
+  // Event listeners
+  selector.addEventListener("change", (e) => {
+    const isCustom = e.target.value === "custom";
+    localStorage.setItem(STORAGE_KEY, e.target.value);
+    togglePanel(isCustom);
+    reopenBtn.style.display = isCustom ? "block" : "none";
+    if (!isCustom) location.reload();
+  });
+
+  loadBtn.addEventListener("click", async () => {
+    try {
+      clearError();
+      const rawData = jsonInput.value.trim();
+
+      if (!rawData) throw new Error("Vennligst lim inn JSON-data");
+
+      // Valider JSON-struktur
+      const customData = JSON.parse(rawData);
+      if (!customData.settings?.mode || !customData.schedule) {
+        throw new Error("Mangler obligatoriske felter:\n- settings.mode\n- schedule");
+      }
+
+      // Valider tidspunkter
+      const isValid = Object.values(customData.schedule).every((day) => day.every((event) => /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(event.time)));
+
+      if (!isValid) throw new Error("Ugyldig tidformat. Bruk HH:MM (f.eks. 08:15)");
+
+      // Lagre og last på nytt
+      localStorage.setItem("customSchedule", rawData);
+      alert("Timeplan lastet vellykket!✅");
+      location.reload();
+    } catch (error) {
+      showError(`Feil: ${error.message}`);
+    }
+  });
+
+  closeBtn.addEventListener("click", () => {
+    togglePanel(false);
+    reopenBtn.style.display = "block";
+  });
+
+  reopenBtn.addEventListener("click", () => {
+    togglePanel(true);
+    reopenBtn.style.display = "none";
+  });
+
+  // Last inn eksisterende custom data
+  if (localStorage.getItem("customSchedule")) {
+    jsonInput.value = localStorage.getItem("customSchedule");
+  }
+
+  // Initialiser reopen-knapp hvis i custom-modus
+  if (localStorage.getItem(STORAGE_KEY) === "custom") {
+    reopenBtn.style.display = "block";
   }
 });

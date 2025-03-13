@@ -88,3 +88,167 @@ h1 {
   margin: 0;
   padding: 10px;
 }
+
+/* ===========================================
+   EGENDEFINERT TIMEPLAN-PANEL
+   =========================================== */
+
+/* Hovedcontainer for panelet */
+#custom-json-panel {
+  display: none;
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 300px;
+  height: 100vh;
+  background: #ffffff;
+  border-left: 1px solid #ddd;
+  padding: 20px;
+  box-shadow: -2px 0 15px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+/* Overskrift */
+#custom-json-panel h3 {
+  color: #2c3e50;
+  margin: 0 0 20px 0;
+  font-size: 1.4em;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+/* JSON-tekstområde */
+#custom-json-input {
+  width: 100%;
+  height: 70vh;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  margin: 15px 0;
+  resize: none;
+  white-space: pre;
+  line-height: 1.5;
+}
+
+/* Knappegruppe */
+.button-group {
+  display: flex;
+  gap: 12px;
+  margin: 20px 0;
+}
+
+/* Last inn-knapp */
+#load-custom-json {
+  background: #27ae60;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+#load-custom-json:hover {
+  background: #219a52;
+  transform: translateY(-1px);
+}
+
+/* Lukk-knapp */
+#close-custom-panel {
+  background: #95a5a6;
+  color: white;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  flex: 1;
+  transition: all 0.2s ease;
+  font-size: 16px;
+}
+
+#close-custom-panel:hover {
+  background: #7f8c8d;
+  transform: translateY(-1px);
+}
+
+/* Feilmelding */
+#json-error {
+  color: #e74c3c;
+  background: #fee;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #fcc;
+  margin: 15px 0 0 0;
+  font-size: 14px;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  display: none; /* Skjult til feil oppstår */
+}
+
+/* ===========================================
+   RESPONSIVT DESIGN
+   =========================================== */
+@media (max-width: 768px) {
+  #custom-json-panel {
+    width: 100%;
+    height: 60vh;
+    top: auto;
+    bottom: 0;
+    box-shadow: 0 -2px 15px rgba(0, 0, 0, 0.1);
+  }
+
+  #custom-json-input {
+    height: 50vh;
+    font-size: 13px;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  #load-custom-json,
+  #close-custom-panel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  #custom-json-panel {
+    padding: 15px;
+  }
+
+  #custom-json-panel h3 {
+    font-size: 1.2em;
+  }
+
+  #custom-json-input {
+    padding: 10px;
+    font-size: 12px;
+  }
+}
+
+/* Åpne-knapp */
+.reopen-btn {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  background: #3498db !important;
+  color: white !important;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+  z-index: 999;
+  transition: all 0.3s ease;
+}
+
+.reopen-btn:hover {
+  background: #2980b9 !important;
+  transform: translateY(-2px);
+}
