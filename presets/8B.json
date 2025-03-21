@@ -1,0 +1,54 @@
+{
+  "settings": {
+    "mode": "school",
+    "break-name": "Friminutt",
+    "hour-length": 60,
+    "end-name": "Skoledagen er slutt"
+  },
+  "schedule": {
+    "mandag": [
+      { "name": "Arbeidslivsfag", "time": "08:00" },
+      { "name": "Arbeidslivsfag / Fremmedspråk", "time": "09:10" },
+      { "name": "Naturfag", "time": "10:20" },
+      { "name": "Kroppsøving", "time": "11:50" }
+    ],
+    "tirsdag": [
+      { "name": "Samfunnsfag", "time": "09:10" },
+      { "name": "Matematikk", "time": "10:20" },
+      { "name": "Fremmedspråk", "time": "11:50" }
+    ],
+    "onsdag": [
+      { "name": "Engelsk", "time": "08:00" },
+      { "name": "UDV/Olweus", "time": "09:10" },
+      { "name": "Norsk", "time": "10:20" },
+      { "name": "Samfunnsfag", "time": "11:50" },
+      { "name": "Naturfag", "time": "13:00" },
+      { "name": "Norsk", "time": "14:10" }
+    ],
+    "torsdag": [
+      { "name": "Matte", "time": "08:00" },
+      { "name": "Engelsk", "time": "09:10" },
+      { "name": "Samfunnsfag", "time": "10:20" },
+      { "name": "Norsk", "time": "11:50" },
+      { "name": "Naturfag", "time": "13:00" },
+      { "name": "Kroppsøving", "time": "14:10" }
+    ],
+    "fredag": [
+      { "name": "KUH", "time": "08:00" },
+      { "name": "KUH", "time": "09:10" },
+      { "name": "Norsk", "time": "10:20" },
+      { "name": "Matte", "time": "11:50" },
+      { "name": "KRLE", "time": "13:00" }
+    ]
+  },
+  "odd-week": {
+    "onsdag": [
+      { "name": "Engelsk", "time": "08:00" },
+      { "name": "UDV/Olweus", "time": "09:10" },
+      { "name": "Norsk", "time": "10:20" },
+      { "name": "Valgfag", "time": "11:50" },
+      { "name": "Valgfag", "time": "13:00" },
+      { "name": "Valgfag", "time": "14:10" }
+    ]
+  }
+}

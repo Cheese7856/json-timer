@@ -8,55 +8,45 @@
   },
   "schedule": {
     "mandag": [
-      { "name": "ARBEIDSLIVSFAG", "time": "08:00" },
-      { "name": "FREMMEDSPRÅK/ALF", "time": "09:10" },
-      { "name": "MATTE", "time": "10:20" },
-      { "name": "KROPPSØVING", "time": "11:50" },
-      { "name": "SAMFUNNSFAG", "time": "13:00" }
+      { "name": "Arbeidslivsfag", "time": "08:00" },
+      { "name": "Fremmedspråk / Alf", "time": "09:10" },
+      { "name": "Matte", "time": "10:20" },
+      { "name": "Kroppsøving", "time": "11:50" },
+      { "name": "Samfunnsfag", "time": "13:00" }
     ],
     "tirsdag": [
-      { "name": "ENGELSK", "time": "09:10" },
-      { "name": "NORSK", "time": "10:20" },
-      { "name": "FREMMEDSPRÅK", "time": "11:50" }
+      { "name": "Engelsk", "time": "09:10" },
+      { "name": "Norsk", "time": "10:20" },
+      { "name": "Fremmedspråk", "time": "11:50" }
     ],
     "onsdag": [
-      { "name": "NATURFAG", "time": "08:00" },
-      { "name": "UDV/OLWEUS", "time": "09:10" },
-      { "name": "MATTE", "time": "10:20" },
-      { "name": "SAMFUNNSFAG", "time": "11:50" },
-      { "name": "NATURFAG", "time": "13:00" }
+      { "name": "Naturfag", "time": "08:00" },
+      { "name": "Udv / Olweus", "time": "09:10" },
+      { "name": "Matte", "time": "10:20" },
+      { "name": "Samfunnsfag", "time": "11:50" },
+      { "name": "Naturfag", "time": "13:00" }
     ],
     "torsdag": [
-      { "name": "KRLE", "time": "08:00" },
-      { "name": "ENGELSK", "time": "09:10" },
-      { "name": "KUH", "time": "10:20" },
-      { "name": "KUH", "time": "11:50" },
-      { "name": "NORSK", "time": "13:00" },
-      { "name": "KROPPSØVING", "time": "16:50" }
+      { "name": "Krle", "time": "08:00" },
+      { "name": "Engelsk", "time": "09:10" },
+      { "name": "Kuh", "time": "10:20" },
+      { "name": "Kuh", "time": "11:50" },
+      { "name": "Norsk", "time": "13:00" },
+      { "name": "Kroppsøving", "time": "16:50" }
     ],
     "fredag": [
-      { "name": "MATTE", "time": "08:00" },
-      { "name": "NATURFAG", "time": "09:10" },
-      { "name": "SAMFUNNSFAG", "time": "10:20" },
-      { "name": "NORSK", "time": "11:50" },
-      { "name": "NORSK (TIL KL. 13:30)", "time": "13:00" }
-    ],
-    "lørdag": [
-      { "name": "Lørdagshendelse 1", "time": "12:05" },
-      { "name": "Lørdagshendelse 2", "time": "12:15" },
-      { "name": "Lørdagshendelse 3", "time": "13:20" }
-    ],
-    "søndag": [
-      { "name": "Søndagshendelse 1", "time": "12:00" },
-      { "name": "Søndagshendelse 2", "time": "12:10" },
-      { "name": "Søndagshendelse 3", "time": "12:20" }
+      { "name": "Matte", "time": "08:00" },
+      { "name": "Naturfag", "time": "09:10" },
+      { "name": "Samfunnsfag", "time": "10:20" },
+      { "name": "Norsk", "time": "11:50" },
+      { "name": "Norsk (Til kl. 13:30)", "time": "13:00" }
     ]
   },
   "odd-week": {
     "onsdag": [
-      { "name": "NATURFAG", "time": "08:00" },
-      { "name": "UDV/OLWEUS", "time": "09:10" },
-      { "name": "MATTE", "time": "10:20" },
+      { "name": "Naturfag", "time": "08:00" },
+      { "name": "Udv / Olweus", "time": "09:10" },
+      { "name": "Matte", "time": "10:20" },
       { "name": "Valgfag", "time": "11:50" },
       { "name": "Valgfag", "time": "13:00" },
       { "name": "Valgfag", "time": "14:10" }

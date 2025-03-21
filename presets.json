@@ -13,5 +13,10 @@
     "id": "8D",
     "name": "Klasse 8D",
     "file": "presets/8D.json"
+  },
+  {
+    "id": "8B",
+    "name": "Klasse 8B",
+    "file": "presets/8B.json"
   }
 ]
